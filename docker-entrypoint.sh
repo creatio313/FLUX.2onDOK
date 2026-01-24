@@ -19,8 +19,6 @@ if [ -z "${PROMPT:-}" ]; then
 	exit 1
 fi
 
-find /FLUX2-klein-4B -maxdepth 2 -type f | sort
-
 pushd /FLUX2-klein-4B
 
 python3 runner.py \

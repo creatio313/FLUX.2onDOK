@@ -64,7 +64,7 @@ print('Start generating images')
 base_seed = random.randint(0, 2**32 - 1)
 for task in tasks:
     file_counter = 0
-    task_prefix, task_prompt = task["value"]
+    task_prefix, task_prompt = task
     print(f'Current Task -> Prefix: {task_prefix}, Prompt: {task_prompt}')
     for batch_iteration in range(int(args.batch)):
         current_seed = (base_seed + batch_iteration) % (2**32)

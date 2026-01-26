@@ -39,7 +39,7 @@ foreach ($r in $rows) {
     # [prefix, prompt] の形式で配列に追加
     $promptList += ,@($r.prefix, $r.prompt)
 }
-$promptJsonString = $promptList | ConvertTo-Json -Compress
+$promptJsonString = ConvertTo-Json @($promptList) -Compress
 
 # Basic認証ヘッダ作成 
 $pair = "$ACCESSTOKEN`:$ACCESSTOKENSECRET"

@@ -4,16 +4,16 @@
 # 使い方
 ## 1.Dockerイメージ登録
 さくらのクラウドのコンテナレジストリに、Dockerイメージをアップロードします。
-Dockerfile、.sh2種、.py２種を同ディレクトリに配置し、Dockerfileには[Hugging face](https://huggingface.co/)のIDとアクセスキーを記載、docker buildしてください。
+filesForDockerImage内のファイルを同ディレクトリに配置し、Dockerfileには[Hugging face](https://huggingface.co/)のIDとアクセスキーを記載、docker buildしてください。
 その後コンテナレジストリにdocker pushします。容量が大きいため、１回では落ちる場合がありますが、複数回実行すれば確実にアップロードできます。
 
 ## 2.画像生成
 高火力DOKへのアクセスキーやさくらのオブジェクトストレージの認証情報を取得します。
-aifluxtest.ps1に転記し、csvファイルのパスを第一引数にして実行します。
+genImage.ps1に転記し、csvファイルのパスを第一引数にして実行します。
 オブジェクトストレージに画像が吐き出される他、高火力DOKのアーティファクトからも出力結果を取ることができます。
 
 ## 3.画像生成
-画像変換を行う場合は、aifluxtest_imt2img.ps1を生成時同様に編集し、csvファイルのパスを第一引数にして実行します。
+画像変換を行う場合は、editImage.ps1を生成時同様に編集し、csvファイルのパスを第一引数にして実行します。
 promptに応じて画像が編集され、設定した接尾辞がファイル名に付与された状態で出力されます。
 
 # 参考文献

@@ -49,7 +49,7 @@ args = arg_parser.parse_args()
 
 tasks = json.loads(args.prompt)
 
-# FLUX 2 devの動作準備
+# FLUX.2 klein 4Bの動作準備
 print('Start loading FLUX2-klein-4B')
 pipe = DiffusionPipeline.from_pretrained(
     "/FLUX2-klein-4B",

@@ -48,6 +48,7 @@ RUN git lfs pull --include="tokenizer/*" && \
     rm -rf .git
 
 COPY runner.py /FLUX2-klein-4B/
+COPY runner_img2img.py /FLUX2-klein-4B/
 COPY docker-entrypoint*.sh /
 RUN chmod +x /docker-entrypoint*.sh /
 

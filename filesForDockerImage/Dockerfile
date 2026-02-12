@@ -34,7 +34,8 @@ RUN apt-get update && \
 # モデルの取得。push時のタイムアウト対策で、必要最低限のファイルをレイヤー分割し取得。
 WORKDIR /FLUX2-klein-4B
 
-RUN GIT_LFS_SKIP_SMUDGE=1 git clone https://ユーザー名に置換:アクセストークンに置換@huggingface.co/black-forest-labs/FLUX.2-klein-4B .
+ARG access_token
+RUN GIT_LFS_SKIP_SMUDGE=1 git clone https://token:$access_token@huggingface.co/black-forest-labs/FLUX.2-klein-4B .
 
 RUN git lfs pull --include="model_index.json"  && \
     git lfs pull --include="scheduler/*" && \

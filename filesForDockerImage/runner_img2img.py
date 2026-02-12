@@ -117,7 +117,7 @@ for task in tasks:
     runner_util.saveImageLocally(images[0], local_output_path)
     logging.info('画像をローカルに保存しました。')
 
-    # objstにアップロード
+    # オブジェクトストレージにアップロード
     logging.info(f'画像をオブジェクトストレージにアップロードします。バケット: {args.objst_output_bucket}, ファイルパス: {output_path}')
     object_storage_client.upload_file(
         Filename=str(local_output_path),

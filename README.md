@@ -5,7 +5,7 @@
 ## 1.Dockerイメージ登録
 さくらのクラウドのコンテナレジストリに、Dockerイメージをアップロードします。
 filesForDockerImage内のファイルを同ディレクトリに配置し、docker buildしてください。
-'''sudo docker build --build-arg access_token=アクセストークン -t <作成したレジストリのホスト名>/flux.2-klein-4b:latest .'''
+```sudo docker build --build-arg access_token=アクセストークン -t <作成したレジストリのホスト名>/flux.2-klein-4b:latest .```
 その後コンテナレジストリにpushします。容量が大きいため、１回ではタイムアウトする場合がありますが、複数回実行すれば、アップロード済レイヤー分を省略して進捗するため、確実にアップロードできます。
 
 ## 2.画像生成

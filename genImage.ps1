@@ -8,10 +8,10 @@ $URI = "https://secure.sakura.ad.jp/cloud/zone/is1a/api/managed-container/1.0/ta
 $IMAGENAME = "イメージ名に置換"
 $REGISTRYID = "レジストリ―認証情報に置換"
 
-$S3_ENDPOINT = "https://s3.isk01.sakurastorage.jp"
-$S3_TOKEN = "トークンに置換"
-$S3_SECRET = "シークレットに置換"
-$S3_BUCKET = "バケット名に置換"
+$OBJST_ENDPOINT = "https://s3.isk01.sakurastorage.jp"
+$OBJST_TOKEN = "アクセスキーIDに置換"
+$OBJST_SECRET = "シークレットアクセスキーに置換"
+$OBJST_BUCKET = "バケット名に置換"
 
 # =====AI向け設定値=====
 $steps = 28
@@ -64,10 +64,10 @@ $bodyObject = @{
             command  = @()
             entrypoint = @()
             environment = @{
-                S3_ENDPOINT = $S3_ENDPOINT
-                S3_TOKEN = $S3_TOKEN
-                S3_SECRET = $S3_SECRET
-                S3_BUCKET = $S3_BUCKET
+                OBJST_ENDPOINT = $OBJST_ENDPOINT
+                OBJST_TOKEN = $OBJST_TOKEN
+                OBJST_SECRET = $OBJST_SECRET
+                OBJST_BUCKET = $OBJST_BUCKET
                 PROMPT = $promptJsonString
                 STEPS = $steps
                 NUM_IMAGES = $num_images

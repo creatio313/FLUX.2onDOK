@@ -8,10 +8,11 @@ $URI = "https://secure.sakura.ad.jp/cloud/zone/is1a/api/managed-container/1.0/ta
 $IMAGENAME = "イメージ名に置換"
 $REGISTRYID = "レジストリ―認証情報に置換"
 
-$S3_ENDPOINT = "https://s3.isk01.sakurastorage.jp"
-$S3_TOKEN = "トークンに置換"
-$S3_SECRET = "シークレットに置換"
-$S3_BUCKET = "バケット名に置換"
+$OBJST_ENDPOINT = "https://s3.isk01.sakurastorage.jp"
+$OBJST_TOKEN = "アクセスキーIDに置換"
+$OBJST_SECRET = "シークレットアクセスキーに置換"
+$OBJST_INPUT_BUCKET = "編集元画像を格納するバケット名に置換"
+$OBJST_OUTPUT_BUCKET = "出力画像を格納するバケット名に置換"
 
 # =====AI向け設定値=====
 $steps = 28
@@ -34,7 +35,7 @@ $promptList = @()
 
 # 二次元配列化
 foreach ($r in $rows) {
-    $promptList += ,@($r.filename,$r.prompt, $r.suffix)
+    $promptList += ,@($r.filepath,$r.prompt, $r.suffix)
 }
 $promptJsonString = ConvertTo-Json @($promptList) -Compress
 
@@ -61,10 +62,11 @@ $bodyObject = @{
             command  = @()
             entrypoint = @("/docker-entrypoint-img2img.sh")
             environment = @{
-                S3_ENDPOINT = $S3_ENDPOINT
-                S3_TOKEN = $S3_TOKEN
-                S3_SECRET = $S3_SECRET
-                S3_BUCKET = $S3_BUCKET
+                OBJST_ENDPOINT = $OBJST_ENDPOINT
+                OBJST_TOKEN = $OBJST_TOKEN
+                OBJST_SECRET = $OBJST_SECRET
+                OBJST_INPUT_BUCKET = $OBJST_INPUT_BUCKET
+                OBJST_OUTPUT_BUCKET = $OBJST_OUTPUT_BUCKET
                 PROMPT = $promptJsonString
                 STEPS = $steps
             }

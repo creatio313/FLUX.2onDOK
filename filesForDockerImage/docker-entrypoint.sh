@@ -27,10 +27,10 @@ python3 runner.py \
   --num="${NUM_IMAGES:-1}" \
   --output="${SAKURA_ARTIFACT_DIR}" \
   --prompt="${PROMPT}" \
-  --s3-bucket="${S3_BUCKET:-}" \
-  --s3-endpoint="${S3_ENDPOINT:-}" \
-  --s3-secret="${S3_SECRET:-}" \
-  --s3-token="${S3_TOKEN:-}" \
+  --objst-bucket="${OBJST_BUCKET:-}" \
+  --objst-endpoint="${OBJST_ENDPOINT:-}" \
+  --objst-secret="${OBJST_SECRET:-}" \
+  --objst-token="${OBJST_TOKEN:-}" \
   --steps="${STEPS:-20}" \
   --width="${WIDTH:-1024}"
 popd

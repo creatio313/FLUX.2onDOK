@@ -1,12 +1,13 @@
-from diffusers import DiffusionPipeline
+import runner_util
 import argparse
-import boto3
-from botocore.config import Config
-import glob
+from diffusers import DiffusionPipeline
 import json
-import os
+import logging
+from pathlib import Path
 import random
 import torch
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(message)s')
 
 # 環境変数からパラメータを取得
 arg_parser = argparse.ArgumentParser()
@@ -40,36 +41,40 @@ arg_parser.add_argument(
     default=1024,
     help='出力画像の高さを指定します。',
 )
-arg_parser.add_argument('--s3-bucket', help='S3のバケットを指定します。')
-arg_parser.add_argument('--s3-endpoint', help='S3互換エンドポイントのURLを指定します。')
-arg_parser.add_argument('--s3-secret', help='S3のシークレットアクセスキーを指定します。')
-arg_parser.add_argument('--s3-token', help='S3のアクセスキーIDを指定します。')
-
+arg_parser.add_argument('--objst-bucket', help='オブジェクトストレージのバケットを指定します。')
+arg_parser.add_argument('--objst-endpoint', help='オブジェクトストレージ互換エンドポイントのURLを指定します。')
+arg_parser.add_argument('--objst-secret', help='オブジェクトストレージのシークレットアクセスキーを指定します。')
+arg_parser.add_argument('--objst-token', help='オブジェクトストレージのアクセスキーIDを指定します。')
 args = arg_parser.parse_args()
 
-tasks = json.loads(args.prompt)
-
 # FLUX.2 klein 4Bの動作準備
-print('Start loading FLUX2-klein-4B')
+logging.info('FLUX.2-klein-4Bを読み込みます。')
 pipe = DiffusionPipeline.from_pretrained(
     "/FLUX2-klein-4B",
     torch_dtype=torch.float16,
-)
+).to('cuda')
+logging.info('FLUX.2-klein-4Bを読み込みました。')
 
-pipe.to('cuda')
-
-print('Start generating images')
+logging.info('主処理開始')
 # 画像生成処理
-# seedを乱数生成
-base_seed = random.randint(0, 2**32 - 1)
+tasks = json.loads(args.prompt)
 for task in tasks:
     file_counter = 0
+
+    # タスク情報を取得し、接頭辞・プロンプトが存在しない場合はスキップ
     task_prefix, task_prompt = task
-    print(f'Current Task -> Prefix: {task_prefix}, Prompt: {task_prompt}')
+    if not task_prefix or not task_prompt:
+        logging.warning(f'必須パラメータが不足しているため、処理をスキップしました。: {task}')
+        continue
+
+    logging.info(f'画像編集タスク開始 -> 接頭辞: {task_prefix}, プロンプト: {task_prompt}')
+
     for batch_iteration in range(int(args.batch)):
-        current_seed = (base_seed + batch_iteration) % (2**32)
-        generator = torch.Generator(device="cuda").manual_seed(current_seed)
-        # 出力命令
+
+        generator = torch.Generator(device="cuda").manual_seed(random.getrandbits(32))
+
+        logging.info('画像生成を実行します。')
+        # 出力命令。guidance_scaleは推奨値3.5に固定しているが、変更も可能。
         images = pipe(
             prompt=task_prompt,
             generator=generator,
@@ -82,45 +87,34 @@ for task in tasks:
         ).images
 
         #出力結果を出力フォルダに保存
+        logging.info(f'画像をローカルに保存します。')
         for i in range(len(images)):
             file_counter += 1
-            images[i].save(
-                os.path.join(
-                    args.output,
-                    '{}_{}.png'.format(task_prefix, file_counter),
-                ),
-            )
+            output_path = Path(args.output) / '{}_{}.png'.format(task_prefix, file_counter)
+            images[i].save(output_path)
+        logging.info('画像をローカルに保存しました。')
+logging.info('主処理完了')
 
 # さくらのオブジェクトストレージに格納するための情報がある場合、S3互換APIでアップロード
-if args.s3_token and args.s3_secret and args.s3_bucket:
-    print('Start uploading to S3')
+if args.objst_token and args.objst_secret and args.objst_bucket:
 
-    s3_config = Config(
-        # 互換性担保のため、設定を入れる。
-        # https://cloud.sakura.ad.jp/news/2025/02/04/objectstorage_defectversion/?_gl=1%2Awg387d%2A_gcl_aw%2AR0NMLjE3NjgxMjIxMDEuQ2owS0NRaUFzWTNMQmhDd0FSSXNBRjZPNlhqR2V1aDdSejdHZkVUbS1SbTVKSkRBeE9CUGoxQ2FxUjlRQ3BSbFN5Vlo2M1h4UTlXVnVBa2FBdkxyRUFMd193Y0I.%2A_gcl_au%2ANzM1ODg0ODM0LjE3NjA5NjM5MDYuMTQzMDE2MzgwNS4xNzY4MDU2MzU3LjE3NjgwNjE2NTg.
-        request_checksum_calculation="when_required",
-        response_checksum_validation="when_required",
-    )
-
-    # キー情報を元にS3APIクライアントを作成
-    s3 = boto3.client(
-        's3',
-        endpoint_url=args.s3_endpoint if args.s3_endpoint else None,
-        aws_access_key_id=args.s3_token,
-        aws_secret_access_key=args.s3_secret,
-        config=s3_config,
-    )
+    object_storage_client = runner_util.genObjectStorageClient(endpoint=args.objst_endpoint,
+                            token=args.objst_token,
+                            secret=args.objst_secret)
 
     # 出力フォルダ内のpngを順々に同名アップロード
-    files = glob.glob(os.path.join(args.output, '*.png'))
+    files = Path(args.output).glob('*.png')
     for file in files:
-        print(os.path.basename(file))
+        filename = Path(file).name
+
+        logging.info(f'画像{filename}をオブジェクトストレージにアップロードします。')
  
-        s3.upload_file(
-            Filename=file,
-            Bucket=args.s3_bucket,
-            Key=os.path.basename(file),
+        object_storage_client.upload_file(
+            Filename=str(file),
+            Bucket=args.objst_bucket,
+            Key=filename,
             ExtraArgs={
                 "ContentType": "image/png",
             },
         )
+        logging.info(f'画像{filename}をオブジェクトストレージにアップロードしました。')

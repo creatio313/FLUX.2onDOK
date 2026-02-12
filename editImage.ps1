@@ -1,21 +1,21 @@
 ﻿# =====初期設定値=====
-$ACCESSTOKEN = "アクセストークンに置換"
-$ACCESSTOKENSECRET = "アクセストークンシークレットに置換"
+$ACCESSTOKEN = "高火力DOKのアクセストークンを設定してください"
+$ACCESSTOKENSECRET = "高火力DOKのアクセストークンシークレットを設定してください"
 
 $URI = "https://secure.sakura.ad.jp/cloud/zone/is1a/api/managed-container/1.0/tasks/"
 
 # =====タスク向け設定値=====
-$IMAGENAME = "イメージ名に置換"
-$REGISTRYID = "レジストリ―認証情報に置換"
+$IMAGENAME = "コンテナレジストリに登録したDockerイメージ名を設定してください"
+$REGISTRYID = "レジストリ認証情報のIDを設定してください"
 
 $OBJST_ENDPOINT = "https://s3.isk01.sakurastorage.jp"
-$OBJST_TOKEN = "アクセスキーIDに置換"
-$OBJST_SECRET = "シークレットアクセスキーに置換"
-$OBJST_INPUT_BUCKET = "編集元画像を格納するバケット名に置換"
-$OBJST_OUTPUT_BUCKET = "出力画像を格納するバケット名に置換"
+$OBJST_TOKEN = "さくらのオブジェクトストレージのアクセスキーIDを設定してください"
+$OBJST_SECRET = "さくらのオブジェクトストレージのシークレットアクセスキーを設定してください"
+$OBJST_INPUT_BUCKET = "編集元画像を格納するバケット名を設定してください"
+$OBJST_OUTPUT_BUCKET = "出力画像を格納するバケット名を設定してください"
 
 # =====AI向け設定値=====
-$steps = 28
+$steps = 4
 
 # 入力データの処理
 

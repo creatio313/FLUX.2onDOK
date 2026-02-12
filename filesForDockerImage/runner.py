@@ -67,7 +67,7 @@ for task in tasks:
         logging.warning(f'必須パラメータが不足しているため、処理をスキップしました。: {task}')
         continue
 
-    logging.info(f'画像編集タスク開始 -> 接頭辞: {task_prefix}, プロンプト: {task_prompt}')
+    logging.info(f'画像生成タスク開始 -> 接頭辞: {task_prefix}, プロンプト: {task_prompt}')
 
     for batch_iteration in range(int(args.batch)):
 

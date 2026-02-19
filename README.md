@@ -16,7 +16,12 @@ FLUX.2-klein-4Bを含んだDockerイメージを生成します。
 ## 2.Dockerイメージのアップロード
 さくらのコンテナレジストリにDockerイメージを保存し、高火力 DOKから使えるようにします。
 1. 以下のコマンドを入力します。
-```sudo docker login -t  <作成したレジストリのホスト名>.sakuracr.jp -u <作成したユーザー> -p <作成したユーザーのパスワード>```
+
+```
+sudo docker login -t  <作成したレジストリのホスト名>.sakuracr.jp -u <作成したユーザー> -p <作成したユーザーのパスワード>
+sudo docker image push <作成したレジストリのホスト名>.sakuracr.jp/flux.2-klein-4b:latestcr.jp/flux.2-klein-4b:latest
+```
+
 容量が大きいため、１回ではタイムアウトする場合がありますが、複数回実行すれば、アップロード済レイヤー分を省略して進捗するため、確実にアップロードできます。
 
 ## 3.環境準備
